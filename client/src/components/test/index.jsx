@@ -9,6 +9,7 @@ class TestMain extends React.Component {
             maskVolume: this.props.volume,
             sourceVolume: this.props.volume,
             questions: [],
+            lossOrSource: [],
             index: 0,
             dbs: [0],
             amount: 5,
@@ -18,25 +19,34 @@ class TestMain extends React.Component {
     }
 
     componentDidMount = async () => {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 4; i++) {
             for (let j = 1; j < 9; j++) {
-                const audio1 = new Audio(process.env.PUBLIC_URL + "/loss-audios/0" + i + j + ".wav");
-                const audio2 = new Audio(process.env.PUBLIC_URL + "/mask-audios/0" + i + j + ".wav");
+                console.log(process.env.PUBLIC_URL + "/loss-audios/0" + i.toString() + j.toString() + ".wav");
+                const audio1 = new Audio(process.env.PUBLIC_URL + "/loss-audios/0" + i.toString() + j.toString() + ".wav");
+                const audio2 = new Audio(process.env.PUBLIC_URL + "/mask-audios/0" + i.toString() + j.toString() + ".wav");
+                const audio3 = new Audio(process.env.PUBLIC_URL + "/source-audios/0" + i.toString() + j.toString() + ".wav");
                 audio1.volume = 0;
                 audio2.volume = 0;
-                await audio1.play();
-                await audio2.play();
-                audio1.pause();
-                audio2.pause();
+                audio3.volume = 0;
+                try {
+                    await audio1.play();
+                    await audio2.play();
+                    await audio3.play();
+                    audio1.pause();
+                    audio2.pause();
+                    audio3.pause();
+                } catch (e) { console.log(e, "for", i, j) }
             }
         }
-        const questions = []
+        const questions = [];
+        const lossOrSource = [];
         for (let i = 0; i < this.state.amount; i++) {
             const color = Math.floor(Math.random() * 4).toString();
             const number = Math.ceil(Math.random() * 8).toString();
+            lossOrSource.push(Math.floor(Math.random() * 2));
             questions.push("0" + color + number);
         }
-        this.setState({ loading: false, questions }, () => console.log(this.state));
+        this.setState({ lossOrSource, loading: false, questions }, () => console.log(this.state));
         this.playAudio();
     }
 
@@ -60,8 +70,13 @@ class TestMain extends React.Component {
     };
 
     playAudio = async () => {
-        const { questions, index, maskVolume, sourceVolume } = this.state;
-        const sourceAudio = new Audio(process.env.PUBLIC_URL + "/loss-audios/" + questions[index] + ".wav");
+        const { questions, index, maskVolume, sourceVolume, lossOrSource } = this.state;
+        let sourceAudio;
+        if (lossOrSource[index] === 0) {
+            sourceAudio = new Audio(process.env.PUBLIC_URL + "/loss-audios/" + questions[index] + ".wav");
+        } else {
+            sourceAudio = new Audio(process.env.PUBLIC_URL + "/source-audios/" + questions[index] + ".wav");
+        }
         const maskAudio = new Audio(process.env.PUBLIC_URL + "/mask-audios/" + questions[index] + ".wav");
         sourceAudio.volume = sourceVolume;
         maskAudio.volume = maskVolume;
@@ -101,15 +116,6 @@ class TestMain extends React.Component {
 
     goEasier = () => {
         const { sourceVolume, index, dbs } = this.state;
-        // if (index <= 4) {
-        //     dbs.push(dbs[index] + 4);
-        //     this.setState({ dbs });
-        //     if (sourceVolume * 10 ** (4 / 20) > 1) {
-        //         return 1;
-        //     } else {
-        //         return sourceVolume * 10 ** (4 / 20);
-        //     }
-        // } else {
         dbs.push(dbs[index] + 3);
         this.setState({ dbs });
         if (sourceVolume * 10 ** (2 / 20) > 1) {
@@ -117,20 +123,13 @@ class TestMain extends React.Component {
         } else {
             return sourceVolume * 10 ** (3 / 20);
         }
-        // }
     };
 
     goHarder = () => {
         const { sourceVolume, index, dbs } = this.state;
-        // if (index <= 4) {
-        //     dbs.push(dbs[index] - 4);
-        //     this.setState({ dbs });
-        //     return sourceVolume * 10 ** (-4 / 20);
-        // } else {
         dbs.push(dbs[index] - 1);
         this.setState({ dbs });
         return sourceVolume * 10 ** (-1 / 20);
-        // }
     };
 
     render() {

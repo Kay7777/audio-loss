@@ -1,5 +1,6 @@
 import React from "react";
 import Main from "./pages/main";
+import Test from "./pages/test";
 import { Route, BrowserRouter } from "react-router-dom";
 
 class App extends React.Component {
@@ -12,6 +13,7 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <Route exact path="/" component={Main} />
+        <Route exact path="/test" component={Test} />
       </BrowserRouter>
     );
   }

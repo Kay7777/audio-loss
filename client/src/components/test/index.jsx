@@ -5,6 +5,7 @@ class TestMain extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            noise: new Audio(process.env.PUBLIC_URL + "/audios/noise.wav"),
             loading: true,
             maskVolume: this.props.volume,
             sourceVolume: this.props.volume,
@@ -24,21 +25,25 @@ class TestMain extends React.Component {
             for (let j = 1; j < 9; j++) {
                 console.log(process.env.PUBLIC_URL + "/loss-audios/0" + i.toString() + j.toString() + ".wav");
                 const audio1 = new Audio(process.env.PUBLIC_URL + "/loss-audios/0" + i.toString() + j.toString() + ".wav");
-                const audio2 = new Audio(process.env.PUBLIC_URL + "/mask-audios/0" + i.toString() + j.toString() + ".wav");
+                // const audio2 = new Audio(process.env.PUBLIC_URL + "/mask-audios/0" + i.toString() + j.toString() + ".wav");
                 const audio3 = new Audio(process.env.PUBLIC_URL + "/source-audios/0" + i.toString() + j.toString() + ".wav");
                 audio1.volume = 0;
-                audio2.volume = 0;
+                // audio2.volume = 0;
                 audio3.volume = 0;
                 try {
                     await audio1.play();
-                    await audio2.play();
+                    // await audio2.play();
                     await audio3.play();
                     audio1.pause();
-                    audio2.pause();
+                    // audio2.pause();
                     audio3.pause();
                 } catch (e) { console.log(e, "for", i, j) }
             }
         }
+        const audio = this.state.noise;
+        audio.volume = 0;
+        await audio.play();
+        audio.pause();
         const questions = [];
         const lossOrSource = [];
         for (let i = 0; i < this.state.amount; i++) {
@@ -78,15 +83,17 @@ class TestMain extends React.Component {
         } else {
             sourceAudio = new Audio(process.env.PUBLIC_URL + "/source-audios/" + questions[index] + ".wav");
         }
-        const maskAudio = new Audio(process.env.PUBLIC_URL + "/mask-audios/" + questions[index] + ".wav");
+        const maskAudio = this.state.noise;
         sourceAudio.volume = sourceVolume;
         maskAudio.volume = maskVolume;
         await sourceAudio.play();
         await maskAudio.play();
+        console.log("this audio is", sourceAudio.duration, "s long.");
         setTimeout(() => {
+            maskAudio.pause();
             this.setState({ userStart: true });
             this.startTimer();
-        }, 2500);
+        }, sourceAudio.duration * 1000);
     }
 
     handleClick = async (num) => {

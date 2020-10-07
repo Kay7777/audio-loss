@@ -1,13 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
-import Button from "@material-ui/core/Button";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles({
   table: {
@@ -23,23 +23,17 @@ export default function SimpleTable(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="left">Question</TableCell>
-            <TableCell align="right">Operation</TableCell>
+            <TableCell align="left">Decibel Change</TableCell>
+            <TableCell align="left">Loss / Source</TableCell>
+            <TableCell align="left">Timer</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {props.rows.map((row, index) => (
             <TableRow key={index}>
-              <TableCell align="left">{row.question}</TableCell>
-              <TableCell align="right">
-                <Button
-                  color="secondary"
-                  key={row._id}
-                  onClick={() => props.handleDelete(row._id)}
-                >
-                  Delete
-                </Button>
-              </TableCell>
+              <TableCell align="left">{row.decibel} dB</TableCell>
+              <TableCell align="left">{row.lossOrSource === "0" ? "Loss" : "Source"}</TableCell>
+              <TableCell align="left">{row.timer} s</TableCell>
             </TableRow>
           ))}
         </TableBody>

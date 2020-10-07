@@ -1,6 +1,7 @@
 import React from "react";
 import Test from "../components/test";
 import Adjustment from "../components/pre-test";
+import Data from "../components/data";
 import axios from "axios";
 
 class Main extends React.Component {
@@ -9,6 +10,10 @@ class Main extends React.Component {
     this.state = {
       process: "adjust",
       volume: 0.1,
+      SNR: null,
+      timer: [],
+      dbs: [],
+      lossOrSource: []
     };
   }
 
@@ -20,13 +25,19 @@ class Main extends React.Component {
     this.setState({ volume, process: "test" });
   }
 
+  handleTestClick = (SNR, timer, lossOrSource, dbs) => {
+    this.setState({ SNR, timer, dbs, lossOrSource, process: "data" })
+  }
+
   renderProcess = () => {
-    const { process, volume } = this.state;
+    const { process, volume, timer, dbs, lossOrSource, SNR } = this.state;
     switch (process) {
       case "adjust":
         return <Adjustment handleClick={this.handleAdjustClick} />
       case "test":
-        return <Test volume={volume} />;
+        return <Test volume={volume} handleClick={this.handleTestClick} />;
+      case "data":
+        return <Data volume={volume} SNR={SNR} timer={timer} dbs={dbs} lossOrSource={lossOrSource} />
       default:
         return null;
     }

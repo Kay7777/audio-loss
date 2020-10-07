@@ -49,7 +49,7 @@ class TestMain extends React.Component {
         for (let i = 0; i < this.state.amount; i++) {
             const color = Math.floor(Math.random() * 4).toString();
             const number = Math.ceil(Math.random() * 8).toString();
-            lossOrSource.push(Math.floor(Math.random() * 2));
+            lossOrSource.push(Math.floor(Math.random() * 2).toString());
             questions.push("0" + color + number);
         }
         this.setState({ lossOrSource, loading: false, questions }, () => console.log(this.state));
@@ -78,7 +78,7 @@ class TestMain extends React.Component {
     playAudio = async () => {
         const { questions, index, maskVolume, sourceVolume, lossOrSource } = this.state;
         let sourceAudio;
-        if (lossOrSource[index] === 0) {
+        if (lossOrSource[index] === "0") {
             sourceAudio = new Audio(process.env.PUBLIC_URL + "/loss-audios/" + questions[index] + ".wav");
         } else {
             sourceAudio = new Audio(process.env.PUBLIC_URL + "/source-audios/" + questions[index] + ".wav");
@@ -113,11 +113,11 @@ class TestMain extends React.Component {
         await this.setState({ index: index + 1, sourceVolume });
         if (this.state.index >= this.state.amount) {
             console.log("it goes finish")
-            const { dbs } = this.state;
+            const { dbs, lossOrSource } = this.state;
             const sum = dbs.reduce((pre, num) => pre + num, 0);
             const SNR = Number(sum / 5).toFixed(2);
             console.log("SNR is " + SNR);
-            this.props.handleClick(SNR, timer);
+            this.props.handleClick(SNR, timer, lossOrSource, dbs);
         } else {
             console.log("it goes continue")
             setTimeout(() => {

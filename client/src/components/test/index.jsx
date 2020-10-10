@@ -21,8 +21,8 @@ class TestMain extends React.Component {
     }
 
     componentDidMount = async () => {
-        for (let i = 0; i < 4; i++) {
-            for (let j = 1; j < 9; j++) {
+        for (var i = 0; i < 4; i++) {
+            for (var j = 1; j < 9; j++) {
                 console.log(process.env.PUBLIC_URL + "/loss-audios/0" + i.toString() + j.toString() + ".wav");
                 const audio1 = new Audio(process.env.PUBLIC_URL + "/loss-audios/0" + i.toString() + j.toString() + ".wav");
                 // const audio2 = new Audio(process.env.PUBLIC_URL + "/mask-audios/0" + i.toString() + j.toString() + ".wav");
